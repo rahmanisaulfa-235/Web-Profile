@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamified Portfolio - Profil Saya</title>
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & RESET
+           ========================================================================== */
+        :root {
+            --bg-navy: #0a1128;
+            --bg-navy-light: #1c2541;
+            --purple-lavender: #d8b4f8;
+            --purple-accent: #a855f7;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(28, 37, 65, 0.65);
+            --glass-border: rgba(216, 180, 248, 0.25);
+            --glow-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+            --font-classic: 'Georgia', serif;
+            --font-modern: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-navy);
+            color: var(--text-light);
+            font-family: var(--font-modern);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Background Particle Canvas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Container Layout */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ==========================================================================
+           2. HEADER & NAVIGATION
+           ========================================================================== */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 17, 40, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-classic);
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--purple-lavender);
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--purple-lavender);
+        }
+
+        /* ==========================================================================
+           3. HERO SECTION (Player Profile & Photo Frame)
+           ========================================================================== */
+        .hero {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 0;
+        }
+
+        .profile-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--glow-shadow);
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Classic Ornamental Photo Frame */
+        .avatar-frame {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            margin-bottom: 25px;
+            border-radius: 50%;
+            padding: 8px;
+            background: linear-gradient(135deg, var(--purple-lavender), var(--bg-navy-light), var(--purple-accent));
+            box-shadow: var(--glow-shadow);
+            animation: pulseFrame 4s infinite alternate ease-in-out;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--bg-navy);
+            background-color: var(--bg-navy-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @keyframes pulseFrame {
+            0% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
+            100% { box-shadow: 0 0 30px rgba(216, 180, 248, 0.6); }
+        }
+
+        .player-title {
+            font-family: var(--font-classic);
+            font-size: 2.2rem;
+            color: var(--purple-lavender);
+            margin-bottom: 8px;
+        }
+
+        .player-badge-tag {
+            display: inline-block;
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid var(--purple-accent);
+            color: var(--purple-lavender);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .player-bio {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 500px;
+            margin-bottom: 25px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--purple-accent), #7e22ce);
+            color: #fff;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--purple-lavender);
+            color: var(--purple-lavender);
+        }
+
+        .btn-outline:hover {
+            background: rgba(216, 180, 248, 0.1);
+        }
+
+        /* ==========================================================================
+           4. STATS & SKILLS SECTION
+           ========================================================================== */
+        .section-title {
+            font-family: var(--font-classic);
+            font-size: 2rem;
+            text-align: center;
+            color: var(--purple-lavender);
+            margin: 60px 0 40px 0;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--purple-accent);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--purple-lavender);
+        }
+
+        .skill-bar-container {
+            margin-top: 15px;
+        }
+
+        .skill-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .skill-progress-bg {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .skill-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple-accent), var(--purple-lavender));
+            width: 0%;
+            transition: width 1.5s ease-in-out;
+            border-radius: 4px;
+        }
+
+        /* ==========================================================================
+           5. MINI GAME SECTION (Memory Game)
+           ========================================================================== */
+        .game-wrapper {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: var(--bg-navy-light);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .memory-card.flipped {
+            background: var(--purple-accent);
+            color: #fff;
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.matched {
+            background: rgba(216, 180, 248, 0.3);
+            border-color: var(--purple-lavender);
+            cursor: default;
+        }
+
+        /* ==========================================================================
+           6. ACHIEVEMENTS & BADGES
+           ========================================================================== */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .badge-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            opacity: 0.5;
+            filter: grayscale(100%);
+            transition: all 0.4s ease;
+        }
+
+        .badge-card.unlocked {
+            opacity: 1;
+            filter: grayscale(0%);
+            border-color: var(--purple-lavender);
+            box-shadow: 0 0 15px rgba(216, 180, 248, 0.2);
+        }
+
+        .badge-icon {
+            font-size: 2rem;
+        }
+
+        .badge-info h4 {
+            font-size: 1rem;
+            color: var(--purple-lavender);
+        }
+
+        .badge-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================================================
+           7. FLOATING MUSIC PLAYER & FOOTER
+           ========================================================================== */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(10, 17, 40, 0.9);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--glow-shadow);
+            z-index: 99;
+        }
+
+        .music-btn {
+            background: var(--purple-accent);
+            border: none;
+            color: #fff;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .music-title {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 80px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .player-title { font-size: 1.8rem; }
+            .hero { padding: 40px 0; }
+            .music-player { bottom: 10px; right: 10px; padding: 8px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas Latar Belakang Partikel -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Header & Navigasi -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">PLAYER PROFILE</a>
+            <ul class="nav-links">
+                <li><a href="#profile">Profil</a></li>
+                <li><a href="#skills">Keahlian</a></li>
+                <li><a href="#arcade">Arcade Zone</a></li>
+                <li><a href="#badges">Lencana</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section: Kartu Profil & Frame Foto -->
+        <section id="profile" class="hero">
+            <div class="profile-card">
+                <!-- Classic Frame Foto Profil -->
+                <div class="avatar-frame">
+                    <!-- Gantilah src di bawah ini dengan nama file foto Anda (misal: profile.jpg) -->
+                    <img src="https://via.placeholder.com/150/1c2541/d8b4f8?text=Foto+Profil" alt="Foto Profil" class="avatar-img" id="profileImg">
+                </div>
+                <h1 class="player-title">Nama Anda</h1>
+                <span class="player-badge-tag">LVL. 99 • Front-End Web Developer</span>
+                <p class="player-bio">
+                    Selamat datang di direktori interaktif saya! Saya berfokus menciptakan pengalaman web yang estetik, modern, serta responsif menggunakan HTML, CSS, dan JavaScript.
+                </p>
+                <div class="btn-group">
+                    <a href="#arcade" class="btn">Mulai Mini Game</a>
+                    <a href="#badges" class="btn btn-outline">Lihat Lencana</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Keahlian / Skill Tree -->
+        <section id="skills">
+            <h2 class="section-title">Atribut & Keahlian</h2>
+            <div class="grid-cards">
+                <div class="card">
+                    <h3>HTML5 & Semantik</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Struktur kode web yang rapi, aksesibel, dan ramah SEO.</p>
+                    <div class="skill-bar-container">
+                        <div class="skill-info"><span>Penguasaan</span><span>90%</span></div>
+                        <div class="skill-progress-bg"><div class="skill-progress-fill" data-progress="90%"></div></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>CSS3 & Styling Modern</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Flexbox, Grid Layout, Glassmorphic UI, dan Animasi Keyframe.</p>
+                    <div class="skill-bar-container">
+                        <div class="skill-info"><span>Penguasaan</span><span>85%</span></div>
+                        <div class="skill-progress-bg"><div class="skill-progress-fill" data-progress="85%"></div></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>JavaScript (ES6+)</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Manipulasi DOM interaktif, logika mini game, dan efek Canvas.</p>
+                    <div class="skill-bar-container">
+                        <div class="skill-info"><span>Penguasaan</span><span>80%</span></div>
+                        <div class="skill-progress-bg"><div class="skill-progress-fill" data-progress="80%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Arcade Zone / Mini Game -->
+        <section id="arcade">
+            <h2 class="section-title">Arcade Zone</h2>
+            <div class="game-wrapper">
+                <h3>Memory Card Game</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">
+                    Cocokkan semua pasangan ikon untuk membuka lencana pengelana (*Explorer Badge*)!
+                </p>
+                <div class="memory-grid" id="memoryGrid"></div>
+                <button class="btn btn-outline" id="resetGameBtn">Ulangi Game</button>
+            </div>
+        </section>
+
+        <!-- Section Lencana / Badges -->
+        <section id="badges">
+            <h2 class="section-title">Lencana Pencapaian</h2>
+            <div class="badge-grid">
+                <div class="badge-card unlocked" id="badge-visitor">
+                    <div class="badge-icon">👋</div>
+                    <div class="badge-info">
+                        <h4>First Visit</h4>
+                        <p>Membuka dan menjelajahi halaman web profil.</p>
+                    </div>
+                </div>
+
+                <div class="badge-card" id="badge-gamer">
+                    <div class="badge-icon">🎮</div>
+                    <div class="badge-info">
+                        <h4>Arcade Master</h4>
+                        <p>Menyelesaikan Memory Game di Arcade Zone.</p>
+                    </div>
+                </div>
+
+                <div class="badge-card" id="badge-music">
+                    <div class="badge-icon">🎵</div>
+                    <div class="badge-info">
+                        <h4>Melody Listener</h4>
+                        <p>Memutar musik pemutar audio di pojok layar.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Widget Pemutar Musik Melayang -->
+    <div class="music-player">
+        <button class="music-btn" id="playMusicBtn">▶</button>
+        <div class="music-title" id="musicTitle">Pemutar Musik (Klik Play)</div>
+        <!-- Gantilah file audio di bawah dengan lagu pilihan Anda jika ada -->
+        <audio id="bgAudio" loop src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Designed & Built with Pure HTML, CSS, & JS.</p>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+       JAVASCRIPT LOGIC
+       ========================================================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* ----------------------------------------------------------------------
+               1. Latar Belakang Canvas Partikel
+               ---------------------------------------------------------------------- */
+            const canvas = document.getElementById('particleCanvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = Math.random() * 0.5 - 0.25;
+                    this.speedY = Math.random() * 0.5 - 0.25;
+                    this.color = Math.random() > 0.5 ? 'rgba(216, 180, 248, ' : 'rgba(168, 85, 247, ';
+                    this.opacity = Math.random() * 0.5 + 0.2;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.fillStyle = this.color + this.opacity + ')';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < 60; i++) {
+                particles.push(new Particle());
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+
+            /* ----------------------------------------------------------------------
+               2. Animasi Progress Bar Skill Saat Dilihat
+               ---------------------------------------------------------------------- */
+            const skillFills = document.querySelectorAll('.skill-progress-fill');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const targetWidth = entry.target.getAttribute('data-progress');
+                        entry.target.style.width = targetWidth;
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            skillFills.forEach(fill => observer.observe(fill));
+
+            /* ----------------------------------------------------------------------
+               3. Memory Game Logic & Unlocking Badge
+               ---------------------------------------------------------------------- */
+            const icons = ['🎨', '🚀', '💻', '🔮', '🎨', '🚀', '💻', '🔮'];
+            const memoryGrid = document.getElementById('memoryGrid');
+            let flippedCards = [];
+            let matchedPairs = 0;
+
+            function initGame() {
+                memoryGrid.innerHTML = '';
+                flippedCards = [];
+                matchedPairs = 0;
+                const shuffled = [...icons].sort(() => Math.random() - 0.5);
+
+                shuffled.forEach((icon, index) => {
+                    const card = document.createElement('div');
+                    card.classList.add('memory-card');
+                    card.dataset.icon = icon;
+                    card.dataset.index = index;
+                    card.innerText = '?';
+                    card.addEventListener('click', flipCard);
+                    memoryGrid.appendChild(card);
+                });
+            }
+
+            function flipCard() {
+                if (flippedCards.length < 2 && !this.classList.contains('flipped') && !this.classList.contains('matched')) {
+                    this.classList.add('flipped');
+                    this.innerText = this.dataset.icon;
+                    flippedCards.push(this);
+
+                    if (flippedCards.length === 2) {
+                        checkMatch();
+                    }
+                }
+            }
+
+            function checkMatch() {
+                const [card1, card2] = flippedCards;
+                if (card1.dataset.icon === card2.dataset.icon) {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedPairs++;
+                    flippedCards = [];
+
+                    if (matchedPairs === icons.length / 2) {
+                        document.getElementById('badge-gamer').classList.add('unlocked');
+                    }
+                } else {
+                    setTimeout(() => {
+                        card1.classList.remove('flipped');
+                        card2.classList.remove('flipped');
+                        card1.innerText = '?';
+                        card2.innerText = '?';
+                        flippedCards = [];
+                    }, 800);
+                }
+            }
+
+            document.getElementById('resetGameBtn').addEventListener('click', initGame);
+            initGame();
+
+            /* ----------------------------------------------------------------------
+               4. Floating Music Player & Unlocking Badge
+               ---------------------------------------------------------------------- */
+            const audio = document.getElementById('bgAudio');
+            const playBtn = document.getElementById('playMusicBtn');
+            const musicTitle = document.getElementById('musicTitle');
+
+            playBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play().then(() => {
+                        playBtn.innerText = '❚❚';
+                        musicTitle.innerText = 'Memutar Musik...';
+                        document.getElementById('badge-music').classList.add('unlocked');
+                    }).catch(err => {
+                        console.log("Audio play error:", err);
+                    });
+                } else {
+                    audio.pause();
+                    playBtn.innerText = '▶';
+                    musicTitle.innerText = 'Musik Dihentikan';
+                }
+            });
+        });
+    </script>
+</body>
+      </html>
